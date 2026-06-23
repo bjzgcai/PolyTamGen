@@ -1,0 +1,91 @@
+# Python / packaging
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Environments
+.env
+.env.*
+.venv/
+venv/
+env/
+ENV/
+
+# Notebook / editor / OS files
+.ipynb_checkpoints/
+.DS_Store
+.DS_Store?
+._*
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs, caches, and local run outputs
+*.log
+logs/
+runs/
+wandb/
+outputs/
+work/
+tmp/
+temp/
+*.tmp
+*.temp
+.cache/
+.conda/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Local model payloads generated inside the source tree.
+# Documented checkpoint entrypoints live in ../../models and are ignored by
+# the repository root when they are large weight files.
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+
+# Local experiment folders
+/checkpoints_debug/
+/checkpoints_pair/
+/models/*
+!/models/README.md
+/results/*
+!/results/README.md
+/comparison_results/
+/local_experiment_results*/
+/benchmark_results/
+/benchmark_results_filtered/
+/benchmark_results_filtered_new/
+/benchmark_results_T3/
+/benchmark_tables/
+/paper_tables/
+/paper_tables_selected/
+/benchmark_ready_results*/
+/case_selection/
+/dpo_data_infer/
+/molde_step2/
+
+# Third-party local tools and archives
+tools/ncbi-blast-2.16.0+/
+*.zip
+*.tar
+*.tar.gz
+*.tar.bz2
+*.7z
+*.rar

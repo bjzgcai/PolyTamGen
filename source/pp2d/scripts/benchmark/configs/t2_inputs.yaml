@@ -1,0 +1,25 @@
+# Paper T2 benchmark inputs.
+#
+# Run from code/source/pp2d. These JSON files are the retained T2
+# generation outputs; scripts/benchmark can recompute docking-ready summaries
+# from them when the docking cache and PDB root are available.
+
+- name: "TamGen"
+  path: "results/raw_generation/T2/TamGen.json"
+  type: "single_target"
+
+- name: "PocketXMol"
+  path: "results/raw_generation/T2/PocketXMol.json"
+  type: "single_target"
+
+- name: "PolyTamGen-Single"
+  path: "results/raw_generation/T2/PolyTamGen-Single.json"
+  type: "single_target"
+
+- name: "PolyTamGen-SFT"
+  path: "results/raw_generation/T2/PolyTamGen-SFT.json"
+  type: "multi_target"
+
+- name: "PolyTamGen-DPO"
+  path: "results/raw_generation/T2/PolyTamGen-DPO.json"
+  type: "multi_target"

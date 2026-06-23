@@ -1,0 +1,39 @@
+{
+    "templates": {
+        "listwise": [
+            "Generate a molecule that binds to {ACT_BLOCK} and avoids {INACT_BLOCK}.",
+            "Design a ligand targeting {ACT_BLOCK} while ensuring no binding to {INACT_BLOCK}.",
+            "Create a compound active against {ACT_BLOCK} but inactive against {INACT_BLOCK}.",
+            "Find a molecule with high affinity for {ACT_BLOCK} and low affinity for {INACT_BLOCK}.",
+            "Optimize a lead to bind {ACT_BLOCK} and not {INACT_BLOCK}.",
+            "Construct a drug candidate for {ACT_BLOCK} avoiding {INACT_BLOCK} targets.",
+            "Synthesize a binder for {ACT_BLOCK} that bypasses {INACT_BLOCK}.",
+            "Propose a structure binding to {ACT_BLOCK} with selectivity against {INACT_BLOCK}.",
+            "Develop a selective inhibitor for {ACT_BLOCK} over {INACT_BLOCK}.",
+            "Target: {ACT_BLOCK}. Anti-target: {INACT_BLOCK}. Generate molecule."
+        ],
+        "listwise_active_only": [
+            "Generate a molecule that binds to {ACT_BLOCK}.",
+            "Design a ligand targeting {ACT_BLOCK}.",
+            "Create a compound active against {ACT_BLOCK}.",
+            "Find a molecule with high affinity for {ACT_BLOCK}.",
+            "Optimize a lead to bind {ACT_BLOCK}.",
+            "Construct a drug candidate for {ACT_BLOCK}.",
+            "Synthesize a binder for {ACT_BLOCK}.",
+            "Propose a structure binding to {ACT_BLOCK}.",
+            "Develop an inhibitor for {ACT_BLOCK}.",
+            "Target: {ACT_BLOCK}. Generate molecule."
+        ]
+    },
+    "special_tokens": {
+        "PROTEIN": "<protein>",
+        "MOL": "<mol>",
+        "MOL_END": "</mol>"
+    },
+    "metadata": {
+        "listwise_count": 10,
+        "listwise_active_only_count": 10,
+        "total_templates": 20
+    }
+}
+

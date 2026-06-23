@@ -1,0 +1,571 @@
+{
+  "special_tokens": {
+    "POCKET_1": "<POCKET_1>",
+    "POCKET_2": "<POCKET_2>"
+  },
+  "templates": {
+    "selectivity": [
+      [
+        "Design a highly selective ligand for pocket ",
+        "<POCKET_1>",
+        ", ensuring it does not bind to pocket ",
+        "<POCKET_2>",
+        ". Please provide the SMILES string:"
+      ],
+      [
+        "What would be the SMILES for a molecule that preferentially binds to pocket ",
+        "<POCKET_1>",
+        " over ",
+        "<POCKET_2>",
+        "?"
+      ],
+      [
+        "I need a molecule that can discriminate between ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ", favoring the former. SMILES: "
+      ],
+      [
+        "Propose a molecular structure that binds tightly to ",
+        "<POCKET_1>",
+        " while having minimal interaction with ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "Find a compound with high affinity for ",
+        "<POCKET_1>",
+        " but negligible affinity for ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "Structurally, what kind of molecule would fit perfectly into ",
+        "<POCKET_1>",
+        " but clash with ",
+        "<POCKET_2>",
+        "? Please provide a SMILES:"
+      ],
+      [
+        "My goal is a ligand that specifically binds ",
+        "<POCKET_1>",
+        ". Please help generate a candidate SMILES. The anti-target is ",
+        "<POCKET_2>",
+        "."
+      ],
+      [
+        "Is there a SMILES string representing a molecule that achieves specific recognition of ",
+        "<POCKET_1>",
+        " while avoiding ",
+        "<POCKET_2>",
+        "?"
+      ],
+      [
+        "Imagine a molecule that can 'see' ",
+        "<POCKET_1>",
+        " but is 'blind' to ",
+        "<POCKET_2>",
+        ". What is the SMILES for such a molecule?"
+      ],
+      [
+        "Based on the structural information of ",
+        "<POCKET_1>",
+        " (primary) and ",
+        "<POCKET_2>",
+        " (to be avoided), construct a selective ligand. SMILES: "
+      ],
+      [
+        "Show me a SMILES string for a molecule that exhibits a significant binding preference for ",
+        "<POCKET_1>",
+        "."
+      ],
+      [
+        "To achieve selectivity for ",
+        "<POCKET_1>",
+        " while bypassing ",
+        "<POCKET_2>",
+        ", which SMILES would you recommend?"
+      ],
+      [
+        "Between ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ", I only care about the first. Give me a molecule that exclusively binds to ",
+        "<POCKET_1>",
+        ". SMILES: "
+      ],
+      [
+        "Optimize a molecular structure to maximize its affinity for ",
+        "<POCKET_1>",
+        " and minimize it for ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "Generate a compound SMILES that has a selective advantage for pocket ",
+        "<POCKET_1>",
+        "."
+      ],
+      [
+        "I'm working on a design challenge: a ligand for ",
+        "<POCKET_1>",
+        " that is repelled by ",
+        "<POCKET_2>",
+        ". Please suggest a solution (SMILES):"
+      ],
+      [
+        "Which compound is most energetically favorable when bound to ",
+        "<POCKET_1>",
+        " but not in ",
+        "<POCKET_2>",
+        "? SMILES: "
+      ],
+      [
+        "Please deduce a molecule with a highly selective binding profile for ",
+        "<POCKET_1>",
+        ". The pocket to avoid is ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "Give me a molecule whose shape and chemistry are complementary to ",
+        "<POCKET_1>",
+        " but mismatch ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "If it had to choose between ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ", what molecule would pick ",
+        "<POCKET_1>",
+        "? Please provide its SMILES."
+      ],
+      [
+        "I need a SMILES for a molecule that can fit into ",
+        "<POCKET_1>",
+        " but is sterically hindered from entering ",
+        "<POCKET_2>",
+        "."
+      ],
+      [
+        "Provide a chemical starting point for selectively targeting the ",
+        "<POCKET_1>",
+        " pocket. It should avoid cross-reactivity with ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Conceive a molecule that can distinguish between these two very similar pockets: targeting ",
+        "<POCKET_1>",
+        " and ignoring ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "What chemical scaffold could serve as a basis for developing a ",
+        "<POCKET_1>",
+        " selective ligand, considering repulsion from ",
+        "<POCKET_2>",
+        "? SMILES:"
+      ],
+      [
+        "Predict a ligand SMILES with high geometric and chemical complementarity to ",
+        "<POCKET_1>",
+        " and low complementarity to ",
+        "<POCKET_2>",
+        "."
+      ],
+      [
+        "Show a SMILES for a molecule that can form key interactions (e.g., hydrogen bonds) with ",
+        "<POCKET_1>",
+        " but not with ",
+        "<POCKET_2>",
+        "."
+      ],
+      [
+        "Generate a ligand for ",
+        "<POCKET_1>",
+        " that exploits a subpocket unique to it and absent in ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "I want a molecule whose binding free energy with ",
+        "<POCKET_1>",
+        " is significantly lower than with ",
+        "<POCKET_2>",
+        ". Please provide a SMILES for such a molecule."
+      ],
+      [
+        "Create a virtual compound with a high selectivity index for ",
+        "<POCKET_1>",
+        " over ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Depict a molecular structure that would preferentially occupy the ",
+        "<POCKET_1>",
+        " binding site. SMILES:"
+      ],
+      [
+        "Is there a molecule whose flexibility allows it to adapt to ",
+        "<POCKET_1>",
+        " but whose conformational penalty prevents it from entering ",
+        "<POCKET_2>",
+        "? SMILES:"
+      ],
+      [
+        "I need a molecule that matches all the pharmacophore features of ",
+        "<POCKET_1>",
+        " but mismatches the pharmacophore model of ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Solve this selectivity puzzle: one ligand, two pockets (",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "). It should only choose the first. SMILES:"
+      ],
+      [
+        "Propose a clever molecular design that exploits the subtle differences between ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        " to achieve selective binding. SMILES:"
+      ],
+      [
+        "Generate a compound that can specifically anchor within ",
+        "<POCKET_1>",
+        ". What is its SMILES?"
+      ],
+      [
+        "Design a molecule that forms a stable complex with ",
+        "<POCKET_1>",
+        " but an unstable one with ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Please provide a SMILES for a molecule showing high selective affinity for ",
+        "<POCKET_1>",
+        "."
+      ],
+      [
+        "I'm looking for a chemical probe that can specifically label ",
+        "<POCKET_1>",
+        " but not ",
+        "<POCKET_2>",
+        ". Please provide its SMILES."
+      ],
+      [
+        "In a competitive binding assay, which molecule is most likely to be captured by ",
+        "<POCKET_1>",
+        " instead of ",
+        "<POCKET_2>",
+        "? SMILES:"
+      ],
+      [
+        "Tailor a ligand for ",
+        "<POCKET_1>",
+        ", ensuring its binding to ",
+        "<POCKET_2>",
+        " is negligible. SMILES:"
+      ]
+    ],
+    "multi-target": [
+      [
+        "I need a molecule that can effectively bind to both pocket ",
+        "<POCKET_1>",
+        " and pocket ",
+        "<POCKET_2>",
+        ". What is its SMILES?"
+      ],
+      [
+        "Design a 'master key' molecule that fits into both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". Please provide the SMILES."
+      ],
+      [
+        "Find a compound that possesses good affinity for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "Which SMILES string represents a molecule that could serve as a ligand for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "?"
+      ],
+      [
+        "Propose a molecule that can bridge the structural commonalities between ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "Generate a single compound that has binding activity against both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "Structurally, what kind of molecule has the potential to occupy both the ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        " sites?"
+      ],
+      [
+        "My goal is a multi-binding molecule, targeting ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        " simultaneously. Suggest a candidate SMILES."
+      ],
+      [
+        "Show a SMILES for a molecule that can form stable interactions with both pockets, ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "."
+      ],
+      [
+        "Construct a ligand that displays affinity for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "Is there a SMILES whose molecule could be considered a common ligand for ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "?"
+      ],
+      [
+        "I'm looking for a chemical scaffold that is suitable for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". Provide an example SMILES."
+      ],
+      [
+        "Imagine a molecule whose size and chemical features allow it to fit comfortably into both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "If a compound were to bind to both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ", what might it look like? SMILES: "
+      ],
+      [
+        "I need a molecule with a broad binding profile covering at least ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES: "
+      ],
+      [
+        "Design a dual-binding ligand capable of recognizing both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Which compound's structure is flexible or generic enough to accommodate the different environments of ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "? SMILES:"
+      ],
+      [
+        "Please deduce a SMILES for a molecule that can adopt a low-energy conformation in both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "."
+      ],
+      [
+        "Find a molecule that incorporates pharmacophores for key residues in both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Provide a chemical starting point as a SMILES for developing a molecule that hits both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "."
+      ],
+      [
+        "Generate a promiscuous ligand that binds well to both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "I'm solving a multi-target problem: one molecule for two pockets, ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". Propose a SMILES."
+      ],
+      [
+        "What molecular architecture could best exploit the shared features between ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "? SMILES:"
+      ],
+      [
+        "Please predict a ligand SMILES with a favorable binding score for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "."
+      ],
+      [
+        "Show me a single molecule that satisfies the basic binding requirements of both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "If I want to engage both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        " with one compound, what kind of SMILES should I start with?"
+      ],
+      [
+        "Conceive a dual-function molecule that can anchor in ",
+        "<POCKET_1>",
+        " as well as in ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Which SMILES represents a molecule that has the potential to be a common scaffold for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "?"
+      ],
+      [
+        "I need a 'broad-spectrum' binder that is effective for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Create a compound that can form similar interaction patterns within both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Design a molecule whose physicochemical properties (e.g., size, hydrophobicity) make it a good candidate for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Solve this dual-binding challenge: one ligand, two pockets (",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "). Provide a SMILES that binds to both."
+      ],
+      [
+        "Is there a molecule where a core fragment could embed in one pocket, while a side chain extends to fit features of the other?"
+      ],
+      [
+        "I need a molecule with a high predicted docking score against both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Depict a molecular structure that can satisfy the spatial and electronic demands of both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Propose a generic ligand that can tolerate the structural differences between ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Generate a theoretical molecule with nanomolar affinity for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        ". SMILES:"
+      ],
+      [
+        "Which molecule could form a binding mode that bridges ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        " (assuming they are adjacent)?"
+      ],
+      [
+        "Find a universal chemical template from which ligands for both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        " could be derived. Provide the template's SMILES."
+      ],
+      [
+        "I need a compound SMILES that shows binding potential to both ",
+        "<POCKET_1>",
+        " and ",
+        "<POCKET_2>",
+        "."
+      ]
+    ]
+  },
+  "metadata": {
+    "version": "1.3",
+    "description": "An expanded set of diverse, natural-language English prompt templates for generating molecular binders. These prompts avoid rigid prefixes and focus on binding, affinity, and selectivity, suitable for PDB-based structural data.",
+    "total_templates": 80,
+    "selectivity_count": 40,
+    "multi_target_count": 40,
+    "last_updated": "2025-07-23",
+    "notes": "English version of the V1.2 templates. Prefixes have been removed for more natural queries. Increased variety in phrasing and sentence structure."
+  }
+}

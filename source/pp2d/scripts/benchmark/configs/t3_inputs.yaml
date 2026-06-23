@@ -1,0 +1,19 @@
+# Paper T3 stress benchmark inputs.
+#
+# Run from code/source/pp2d.
+
+- name: "PolyTamGen-SFT"
+  path: "results/raw_generation/T3/PolyTamGen-SFT.json"
+  type: "multi_target"
+
+- name: "PolyTamGen-DPO"
+  path: "results/raw_generation/T3/PolyTamGen-DPO.json"
+  type: "multi_target"
+
+- name: "TamGen"
+  path: "results/raw_generation/T3/TamGen.json"
+  type: "single_target"
+
+- name: "PocketXMol"
+  path: "results/raw_generation/T3/PocketXMol.json"
+  type: "single_target"

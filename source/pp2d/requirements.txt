@@ -1,0 +1,50 @@
+# Core deep learning framework
+torch
+peft
+
+# For Large Language Models (used in Decoder)
+transformers
+sentencepiece
+
+# For Pocket Encoder
+se3-transformer-pytorch
+egnn-pytorch
+e3nn
+schnetpack
+
+# For graph neural networks (a dependency for se3-transformer)
+torch_geometric
+
+# For parsing command-line arguments
+argparse
+
+# Configuration file parsing
+PyYAML
+easydict
+
+# General data manipulation and scientific computing
+pandas
+numpy
+scikit-learn
+lmdb
+tensorboard
+matplotlib
+seaborn
+rdkit
+
+# For PDB parsing
+biotite
+
+# Docking-related dependencies
+meeko
+scipy
+pdb2pqr
+vina
+
+# Optional utilities
+biopython
+tqdm
+requests
+nltk
+rouge-score
+gemmi

@@ -1,0 +1,112 @@
+# PolyTamGen DPO training config.
+#
+# Build preference JSONL files first with:
+# python scripts/data/build_dpo_preferences.py --input <scored_candidates.json> \
+#   --output data/dpo_preferences/preferences_5qed_train.jsonl \
+#   --valid-output data/dpo_preferences/preferences_5qed_valid.jsonl --qed-weight 5.0
+#
+# Run with:
+#   python scripts/train_dpo.py --config configs/polytamgen_dpo.yaml
+#
+# By default this initializes both policy and frozen reference model from the
+# standard SFT checkpoint path. To continue from a newly trained SFT run,
+# override pp2d.pretrained_model_path and dpo.reference_model_path on the CLI.
+
+data:
+  preference_train_path: "data/dpo_preferences/preferences_5qed_train.jsonl"
+  preference_valid_path: "data/dpo_preferences/preferences_5qed_valid.jsonl"
+  lmdb_path: "data/pdb_multitarget/protein_features.lmdb"
+  pdb_dir: null
+  data_path: null
+  split_path: null
+  train_data: []
+  valid_data: []
+  test_data: []
+  train_subset: false
+  valid_subset: false
+  test_subset: false
+  train_subset_size: 100000
+  valid_subset_size: 1000
+  test_subset_size: 100
+
+training:
+  seed: 42
+  max_active: 3
+  max_inactive: 0
+  min_active: 1
+  prob_no_inactives: 0.5
+  prob_single_active: 0.0
+  batch_size: 8
+  update_freq: 1
+  epochs: 2
+  learning_rate: 5.0e-6
+  base_learning_rate: 5.0e-6
+  encoder_learning_rate: 0.0
+  llm_learning_rate: 5.0e-6
+  num_workers: 4
+  log_interval: 10
+  keep_top_k: 2
+  log_dir: "outputs/logs/polytamgen-dpo"
+  use_mixed_precision: true
+  mixed_precision_dtype: "bf16"
+  save_weights_only: true
+  save_weights_dtype: "bf16"
+  save_optimizer_last: true
+  generation_validation_enabled: false
+  generation_best_checkpoint_enabled: false
+  lr_scheduler:
+    use_scheduler: true
+    scheduler_type: "cosine"
+    warmup_steps: 100
+    min_lr_ratio: 0.01
+
+dpo:
+  beta: 0.1
+  reference_model_path: "models/polytamgen-sft/polytamgen-sft.pth"
+  reference_free: false
+  length_normalize_logps: false
+
+pocket_encoder:
+  num_atom_features: 29
+  embedding_dim: 1024
+  egnn_dim: 768
+  egnn_depth: 5
+  dist_feat_dim: 16
+  dir_feat_dim: 3
+  seq_feat_dim: 8
+  radius_cutoff: 10.0
+  diffusion_num_timesteps: 1000
+  diffusion_coord_loss_weight: 1.0
+  contrastive_projection_dim: 256
+
+pp2d:
+  llm_model_name_or_path: "models/base-llm/NLM-1b"
+  pretrained_model_path: "models/polytamgen-sft/polytamgen-sft.pth"
+  pocket_encoder_model: null
+  max_length: 768
+  use_precomputed_features: true
+  precomputed_feature_dim: 1152
+  protein_adapter_type: "qformer"
+  adapter_layers: 2
+  num_queries: 32
+  use_set_transformer: true
+  set_transformer_heads: 8
+  set_transformer_layers: 2
+  rope_theta: 10000.0
+  use_lora: false
+
+loss:
+  pad_token_id: 128256
+  smiles_loss_type: "cross_entropy"
+  label_smoothing: 0.1
+
+distributed:
+  distributed: true
+  world_size: null
+  backend: "nccl"
+  master_addr: "localhost"
+  master_port: "12355"
+
+training_mode: "dpo"
+checkpoint_dir: "outputs/checkpoints/polytamgen-dpo"
+tensorboard_dir: "outputs/runs/polytamgen-dpo"

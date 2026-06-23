@@ -1,0 +1,103 @@
+# PolyTamGen SFT training config.
+#
+# Run with:
+#   python scripts/train_pp2d.py --config configs/polytamgen_sft.yaml
+#
+# Paths are relative to code/source/pp2d. The training launcher also changes
+# into that directory automatically when called from another working directory.
+
+data:
+  data_path: "data/sft_train_valid/ligand_profiles.pkl"
+  split_path: "data/sft_train_valid/splits/train_valid_split.pkl"
+  lmdb_path: "data/sft_train_valid/protein_features.lmdb"
+  pdb_dir: null
+  train_data: []
+  valid_data: []
+  test_data: []
+  train_subset: false
+  valid_subset: false
+  test_subset: false
+  train_subset_size: 100000
+  valid_subset_size: 1000
+  test_subset_size: 100
+
+training:
+  seed: 42
+  save_interval_steps: 500
+  max_active: 3
+  max_inactive: 0
+  min_active: 1
+  prob_no_inactives: 0.5
+  prob_single_active: 0.0
+  batch_size: 8
+  update_freq: 4
+  epochs: 20
+  learning_rate: 1.0e-4
+  base_learning_rate: 1.0e-4
+  encoder_learning_rate: 0.0
+  llm_learning_rate: 0.0
+  num_workers: 4
+  log_interval: 10
+  keep_top_k: 2
+  log_dir: "outputs/logs/polytamgen-sft"
+  use_mixed_precision: true
+  mixed_precision_dtype: "bf16"
+  save_weights_only: true
+  save_weights_dtype: "bf16"
+  save_optimizer_last: true
+  generation_validation_enabled: true
+  generation_validation_num_samples: 512
+  generation_validation_max_new_tokens: 192
+  generation_validation_num_beams: 1
+  generation_validation_disable_sampling: true
+  generation_best_checkpoint_enabled: true
+  generation_best_keep_top_k: 2
+  lr_scheduler:
+    use_scheduler: true
+    scheduler_type: "cosine"
+    warmup_steps: 1000
+    min_lr_ratio: 0.01
+
+pocket_encoder:
+  num_atom_features: 29
+  embedding_dim: 1024
+  egnn_dim: 768
+  egnn_depth: 5
+  dist_feat_dim: 16
+  dir_feat_dim: 3
+  seq_feat_dim: 8
+  radius_cutoff: 10.0
+  diffusion_num_timesteps: 1000
+  diffusion_coord_loss_weight: 1.0
+  contrastive_projection_dim: 256
+
+pp2d:
+  llm_model_name_or_path: "models/base-llm/NLM-1b"
+  pocket_encoder_model: null
+  max_length: 768
+  use_precomputed_features: true
+  precomputed_feature_dim: 1152
+  protein_adapter_type: "qformer"
+  adapter_layers: 2
+  num_queries: 32
+  use_set_transformer: true
+  set_transformer_heads: 8
+  set_transformer_layers: 2
+  rope_theta: 10000.0
+  use_lora: false
+
+loss:
+  pad_token_id: 128256
+  smiles_loss_type: "cross_entropy"
+  label_smoothing: 0.1
+
+distributed:
+  distributed: true
+  world_size: null
+  backend: "nccl"
+  master_addr: "localhost"
+  master_port: "12355"
+
+training_mode: "pp2d"
+checkpoint_dir: "outputs/checkpoints/polytamgen-sft"
+tensorboard_dir: "outputs/runs/polytamgen-sft"
