@@ -11,8 +11,6 @@ Files:
 
 The verifier imports this builder's context-level metric function so both
 use the same finite-score denominator and equal weighting across contexts.
-The two known standard-deviation mismatches are documented in
-[the reproduction guide](../../../../../REPRODUCIBILITY.md#known-table-differences).
 
 Run through:
 

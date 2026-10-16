@@ -34,22 +34,6 @@ bootstrap interval and its seed/replicate metadata; it does not rerun the
 bootstrap or regenerate docking scores. The old top-k summary is not a
 replacement for these inputs.
 
-## Known table differences
-
-Recomputation and the existing pooled-protocol audit agree on two T3
-strict-success standard deviations that differ from the revised manuscript:
-
-| Method | Revised table | Recomputed standard deviation | Rounded to three decimals |
-| --- | ---: | ---: | ---: |
-| PocketXMol | 0.165 | 0.165540153 | 0.166 |
-| PolyTamGen-SFT | 0.202 | 0.201470454 | 0.201 |
-
-The verifier retains the manuscript reference values and reports these two
-mismatches. They must be reconciled before claiming exact reproduction of all
-main-table values. The nine T2/T3 main strict-success means match the revised
-tables. See `analysis_inputs/revision_20260823/pooled_protocol/` in the revised
-bundle for the earlier independent audit.
-
 ## 1. Install the package
 
 Create and activate a Conda environment named `pp2d` with Python 3.12. Install
@@ -152,9 +136,7 @@ python scripts/paper/verify_paper_alignment.py
 The reports are written under `outputs/paper_reproduction/`, outside the
 downloaded inputs. Use `--results-root` to select an external results tree,
 and `--out-json`/`--out-md` to select report paths. Missing revised
-target-conditioning inputs are reported as failures. With the prepared
-revised bundle, the two known standard-deviation differences above also
-remain failures.
+target-conditioning inputs are reported as failures.
 
 ## 6. Rebuild available analysis artifacts
 

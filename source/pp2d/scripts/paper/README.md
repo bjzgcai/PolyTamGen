@@ -16,11 +16,9 @@ The scored files used for paper table reproduction are
 `results/scored/T2/per_molecule.json` and
 `results/scored/T3/per_molecule.json`. The builder and verifier share the same
 context-level metric calculation. The main cutoff is `-8.18`; `-7.0` is an
-explicit sensitivity setting. See the
-[release scope](../../../../REPRODUCIBILITY.md#release-scope) and
-[known table differences](../../../../REPRODUCIBILITY.md#known-table-differences)
-before interpreting the full verifier's exit status. Use the `2026.10.16`
-results bundle, which includes the revised target-conditioning outputs.
+explicit sensitivity setting. Use the `2026.10.16` results bundle, which includes
+the revised target-conditioning outputs. See
+[release scope](../../../../REPRODUCIBILITY.md#release-scope) for input details.
 
 The raw generation files can also be rebuilt into compact auxiliary molecule
 rows with RDKit properties plus available per-pocket docking scores:

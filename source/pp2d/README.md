@@ -49,8 +49,7 @@ PolyTamGen-DPO values under the revised main protocol:
 
 The earlier `-7.0` cutoff is retained for sensitivity analysis. Use the
 `2026.10.16` results bundle; see
-[release scope](../../REPRODUCIBILITY.md#release-scope) for the revised inputs
-and two known T3 standard-deviation differences.
+[release scope](../../REPRODUCIBILITY.md#release-scope) for the revised inputs.
 
 The paper also reports weakest-target diagnostics, FlexRibbon affinity
 prediction, cross-target stress testing, strain analysis, module ablations, DPO
@@ -310,8 +309,7 @@ For T3, use `scripts/benchmark/configs/t3_inputs.yaml` and
 `data/pdb_benchmark/test_T3.tsv`.
 
 The verifier recomputes the revised main-table metrics from the scored files
-and checks the revised derived artifacts. It retains the manuscript's
-reference values, including the two known standard-deviation mismatches:
+and checks the revised derived artifacts:
 
 ```bash
 python scripts/paper/verify_paper_alignment.py

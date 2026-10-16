@@ -101,9 +101,8 @@ The post-processing scripts and results bundle for version `2026.10.16` use
 the revised main cutoff, `AvgDock < -8.18`, and rank-matched target-conditioning
 outputs. The raw scores and generations are unchanged from the earlier release.
 
-See [release scope](REPRODUCIBILITY.md#release-scope) for the required files
-and [known table differences](REPRODUCIBILITY.md#known-table-differences)
-for two standard deviations that do not match the revised manuscript.
+See [the reproducibility guide](REPRODUCIBILITY.md) for the required files
+and reproduction commands.
 
 ## Inference
 
@@ -176,7 +175,6 @@ Full DPO retraining starts from an SFT checkpoint produced by the SFT stage.
 
 ## Notes
 
-- Table checks retain the revised manuscript's reference values and reporting precision.
 - To rerun docking, you need the docking software stack and sufficient GPU or
   CPU compute. Use the released scored files as reference inputs when
   recomputing tables under the revised cutoff.

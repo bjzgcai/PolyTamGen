@@ -11,7 +11,7 @@ It updates the derived results while keeping the data archive, base LLM,
 and DPO checkpoint unchanged. The original `2026.06.11` record remains at
 DOI `10.5281/zenodo.20594128`. See
 [release scope](REPRODUCIBILITY.md#release-scope) for the verifier's input
-requirements and known table differences.
+requirements.
 
 ## Asset Files
 
@@ -25,7 +25,7 @@ requirements and known table differences.
   the revised benchmark result bundle, including
   molecule-level scored results, raw-generation outputs, supplement materials,
   figures, revised main tables, rank-matched conditioning outputs, and the
-  full verification report with two known standard-deviation mismatches.
+  full verification report.
 
 The results archive uses xz compression and is split into four volumes to
 keep each upload small. Download all four; the data archive remains
