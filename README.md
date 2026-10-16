@@ -80,7 +80,7 @@ Download `polytamgen-dpo.pth` and place it under
 `source/pp2d/models/polytamgen-dpo/`. Extract `base-llm_NLM-1b.tar` from
 `source/pp2d/models/` so it creates `source/pp2d/models/base-llm/NLM-1b/`.
 
-Extract `polytamgen_full_results.tar.gz` so that `source/pp2d/results/`
+Extract `polytamgen_full_results.tar.xz` so that `source/pp2d/results/`
 contains the scored T2/T3 metrics, raw generations, supplementary outputs,
 figures, and analysis inputs. See `ASSETS.md` and `ASSET_MANIFEST.csv` for the
 expected layout.

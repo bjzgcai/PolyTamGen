@@ -1,14 +1,14 @@
 logical_path,archive,kind,used_by,notes
 source/pp2d/models/polytamgen-dpo/polytamgen-dpo.pth,polytamgen-dpo.pth,checkpoint,dpo_inference,Final PolyTamGen DPO checkpoint used for main benchmark generation
 source/pp2d/models/base-llm/NLM-1b,base-llm_NLM-1b.tar,model_directory,dpo_inference_and_training,Base NatureLM/NLM generator expected by configs and provided as a separate archive
-source/pp2d/results,polytamgen_full_results.tar.gz,result_tree,paper_reproduction,Current benchmark result tree with scored raw-generation supplement figure and analysis-input artifacts
-source/pp2d/results/scored,polytamgen_full_results.tar.gz,scored_result_tree,paper_reproduction,Molecule-level scored benchmark result tree
-source/pp2d/results/scored/T2/per_molecule.json,polytamgen_full_results.tar.gz,scored_result,paper_reproduction,Full T2 molecule-level scored table source
-source/pp2d/results/scored/T3/per_molecule.json,polytamgen_full_results.tar.gz,scored_result,paper_reproduction,Full T3 molecule-level scored table source
-source/pp2d/results/raw_generation,polytamgen_full_results.tar.gz,raw_generation,paper_reproduction,T2/T3 raw generation JSONs included in the full results bundle
-source/pp2d/results/analysis_inputs,polytamgen_full_results.tar.gz,analysis_input,supplement_reproduction,Cross-target DPO sensitivity FlexRibbon module ablation and strain inputs included in the full results bundle
-source/pp2d/results/supplement,polytamgen_full_results.tar.gz,supplement_result,supplement_reproduction,Supplement summary and molecule-level provenance artifacts included in the full results bundle
-source/pp2d/results/figures,polytamgen_full_results.tar.gz,figure_result,paper_reproduction,Figure-ready numeric and source artifacts included in the full results bundle
+source/pp2d/results,polytamgen_full_results.tar.xz,result_tree,paper_reproduction,Current benchmark result tree with scored raw-generation supplement figure and analysis-input artifacts
+source/pp2d/results/scored,polytamgen_full_results.tar.xz,scored_result_tree,paper_reproduction,Molecule-level scored benchmark result tree
+source/pp2d/results/scored/T2/per_molecule.json,polytamgen_full_results.tar.xz,scored_result,paper_reproduction,Full T2 molecule-level scored table source
+source/pp2d/results/scored/T3/per_molecule.json,polytamgen_full_results.tar.xz,scored_result,paper_reproduction,Full T3 molecule-level scored table source
+source/pp2d/results/raw_generation,polytamgen_full_results.tar.xz,raw_generation,paper_reproduction,T2/T3 raw generation JSONs included in the full results bundle
+source/pp2d/results/analysis_inputs,polytamgen_full_results.tar.xz,analysis_input,supplement_reproduction,Cross-target DPO sensitivity FlexRibbon module ablation and strain inputs included in the full results bundle
+source/pp2d/results/supplement,polytamgen_full_results.tar.xz,supplement_result,supplement_reproduction,Supplement summary and molecule-level provenance artifacts included in the full results bundle
+source/pp2d/results/figures,polytamgen_full_results.tar.xz,figure_result,paper_reproduction,Figure-ready numeric and source artifacts included in the full results bundle
 source/pp2d/data/sft_train_valid/Merged_Deduplicated.csv,polytamgen_data.tar.gz,training_data,sft_training,SFT ligand-target source table
 source/pp2d/data/sft_train_valid/ligand_profiles.pkl,polytamgen_data.tar.gz,training_data,sft_training_and_quick_check,SFT ligand profile pickle
 source/pp2d/data/sft_train_valid/protein_features.lmdb,polytamgen_data.tar.gz,feature_store,sft_training_and_quick_check,SFT protein feature LMDB

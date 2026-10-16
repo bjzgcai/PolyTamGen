@@ -21,10 +21,13 @@ requirements and known table differences.
   PolyTamGen configs for checkpoint inference.
 - `polytamgen-dpo.pth`: final PolyTamGen-DPO checkpoint used for the main
   benchmark generation.
-- `polytamgen_full_results.tar.gz`: revised benchmark result bundle, including
+- `polytamgen_full_results.tar.xz`: revised benchmark result bundle, including
   molecule-level scored results, raw-generation outputs, supplement materials,
   figures, revised main tables, rank-matched conditioning outputs, and the
   full verification report with two known standard-deviation mismatches.
+
+The results archive uses xz compression. Extract it with `tar -xf`; the data
+archive remains gzip-compressed.
 
 ## Where To Extract
 
@@ -33,7 +36,7 @@ this repository, extract or place the asset files so these logical paths exist:
 
 ```text
 source/pp2d/data/                         # from polytamgen_data.tar.gz or prepared locally
-source/pp2d/results/                      # from polytamgen_full_results.tar.gz
+source/pp2d/results/                      # from polytamgen_full_results.tar.xz
 source/pp2d/models/polytamgen-dpo/        # contains polytamgen-dpo.pth
 source/pp2d/models/base-llm/NLM-1b        # from base-llm_NLM-1b.tar
 ```

@@ -1,7 +1,7 @@
 # Results
 
 Full result artifacts are distributed outside git as
-`polytamgen_full_results.tar.gz`.
+`polytamgen_full_results.tar.xz`.
 
 For the command examples in this repository, extract the archive from
 `source/pp2d/` so it creates:

@@ -76,7 +76,7 @@ The Zenodo record is https://zenodo.org/records/23417382
 polytamgen_data.tar.gz
 base-llm_NLM-1b.tar
 polytamgen-dpo.pth
-polytamgen_full_results.tar.gz
+polytamgen_full_results.tar.xz
 ```
 
 Place them under `source/pp2d/` so these paths exist:
