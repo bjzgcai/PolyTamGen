@@ -69,15 +69,21 @@ packages in `requirements.txt` suit your environment.
 ## 2. Download And Extract Assets
 
 The Zenodo record is https://zenodo.org/records/23417382
-(DOI: `10.5281/zenodo.23417382`). Download the four asset files listed in
+(DOI: `10.5281/zenodo.23417382`). Download the asset files listed in
 `ASSETS.md`:
 
 ```text
 polytamgen_data.tar.gz
 base-llm_NLM-1b.tar
 polytamgen-dpo.pth
-polytamgen_full_results.tar.xz
+polytamgen_full_results.tar.xz.part01
+polytamgen_full_results.tar.xz.part02
+polytamgen_full_results.tar.xz.part03
+polytamgen_full_results.tar.xz.part04
 ```
+
+[Assemble the four results volumes](ASSETS.md#where-to-extract) before
+extracting the results archive.
 
 Place them under `source/pp2d/` so these paths exist:
 

@@ -21,15 +21,29 @@ requirements and known table differences.
   PolyTamGen configs for checkpoint inference.
 - `polytamgen-dpo.pth`: final PolyTamGen-DPO checkpoint used for the main
   benchmark generation.
-- `polytamgen_full_results.tar.xz`: revised benchmark result bundle, including
+- `polytamgen_full_results.tar.xz.part01` through `.part04`: four volumes of
+  the revised benchmark result bundle, including
   molecule-level scored results, raw-generation outputs, supplement materials,
   figures, revised main tables, rank-matched conditioning outputs, and the
   full verification report with two known standard-deviation mismatches.
 
-The results archive uses xz compression. Extract it with `tar -xf`; the data
-archive remains gzip-compressed.
+The results archive uses xz compression and is split into four volumes to
+keep each upload small. Download all four; the data archive remains
+gzip-compressed.
 
 ## Where To Extract
+
+From the repository root, assemble the four downloaded results volumes and
+extract them:
+
+```bash
+cat /path/to/polytamgen_full_results.tar.xz.part0[1-4] > polytamgen_full_results.tar.xz
+tar -xf polytamgen_full_results.tar.xz -C source/pp2d
+```
+
+The assembled archive is 31,760,368 bytes, with MD5
+`4f9a59655dda4a73ff7757e3410ad50b`. `ASSET_MANIFEST.csv` names this assembled
+archive when mapping the results paths.
 
 Commands in `source/pp2d/` use paths relative to that directory. After cloning
 this repository, extract or place the asset files so these logical paths exist:
