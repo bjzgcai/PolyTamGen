@@ -41,8 +41,8 @@ cat /path/to/polytamgen_full_results.tar.xz.part0[1-4] > polytamgen_full_results
 tar -xf polytamgen_full_results.tar.xz -C source/pp2d
 ```
 
-The assembled archive is 31,760,368 bytes, with MD5
-`4f9a59655dda4a73ff7757e3410ad50b`. `ASSET_MANIFEST.csv` names this assembled
+The assembled archive is 31,759,928 bytes, with MD5
+`5a07bb5fb4bad69b6fcde3350eb25f60`. `ASSET_MANIFEST.csv` names this assembled
 archive when mapping the results paths.
 
 Commands in `source/pp2d/` use paths relative to that directory. After cloning
