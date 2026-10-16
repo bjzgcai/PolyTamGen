@@ -13,10 +13,10 @@ Test groups:
 - `test_adaptor.py`: adapter module behavior.
 - `test_real_model_smoke.py`: optional real-model smoke test.
 - `test_subset.py`: subset utility behavior.
+- `test_paper_reproduction.py`: strict-success boundaries, finite-score denominators, context weighting, table CLI cutoff selection, and revised target-conditioning checks without model assets.
 
 Run all tests:
 
 ```bash
 python -m pytest -q
 ```
-

@@ -7,7 +7,12 @@ Files:
 
 - `generate_tables.py`: generates CSV consistency summaries from `results/scored/T2/per_target.csv`.
 - `assemble_table_bundle.py`: copies a selected subset of generated consistency CSVs into a bundled output directory.
-- `generate_consistency_tables_from_per_molecule.py`: optional table builder that rebuilds T2/T3 tables from a supplied `per_molecule.json` pair. With the canonical scored files under `results/scored/`, the generated T2/T3 consistency tables match the paper main tables exactly.
+- `generate_consistency_tables_from_per_molecule.py`: rebuilds T2/T3 tables from a supplied `per_molecule.json` pair. It defaults to the revised `AvgDock < -8.18` strict-success cutoff and labels the cutoff in the generated headers. Use `--strict-threshold -7.0` with a separate output directory for sensitivity analysis. It loads one split at a time.
+
+The verifier imports this builder's context-level metric function so both
+use the same finite-score denominator and equal weighting across contexts.
+The two known standard-deviation mismatches are documented in
+[the reproduction guide](../../../../../REPRODUCIBILITY.md#known-table-differences).
 
 Run through:
 

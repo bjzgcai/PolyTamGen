@@ -36,38 +36,44 @@ Main metrics:
 - `AvgDock`: average Vina docking score over all intended targets; lower is
   better.
 - `SR_strict`: strict success rate requiring `QED > 0.25`,
-  `SA_norm > 0.59`, and Vina score `<= -7.0` for every intended target.
+  `SA_norm > 0.59`, and `AvgDock < -8.18`; records with non-finite AvgDock
+  are excluded from its denominator.
 - Validity, diversity, QED, and synthetic accessibility (SA).
 
-Headline paper numbers for PolyTamGen-DPO under the benchmark protocol:
+PolyTamGen-DPO values under the revised main protocol:
 
 | Split | AvgDock | SR_strict | Validity | Diversity | QED | SA |
 |---|---:|---:|---:|---:|---:|---:|
-| T2 | -7.642 | 0.648 | 0.968 | 0.837 | 0.565 | 0.805 |
-| T3 | -7.918 | 0.767 | 0.966 | 0.841 | 0.567 | 0.806 |
+| T2 | -7.642 | 0.331 | 0.968 | 0.837 | 0.565 | 0.805 |
+| T3 | -7.918 | 0.405 | 0.966 | 0.841 | 0.567 | 0.806 |
+
+The earlier `-7.0` cutoff is retained for sensitivity analysis. Use the
+`2026.10.16` results bundle; see
+[release scope](../../REPRODUCIBILITY.md#release-scope) for the revised inputs
+and two known T3 standard-deviation differences.
 
 The paper also reports weakest-target diagnostics, FlexRibbon affinity
 prediction, cross-target stress testing, strain analysis, module ablations, DPO
-reward sensitivity, and a structural case study. The result entrypoints for
-these checks are under `results/` after extracting the full-results
-archive from this directory.
+reward sensitivity, and a structural case study. The current `results/`
+bundle contains the revised derived analyses. Its rank-matched conditioning
+outputs replace the earlier cross-target top-k summaries.
 
 ## Install
 
-Run commands from this directory:
+Create and activate a Conda environment named `pp2d`. Install PyTorch and
+PyTorch Geometric builds that match your CPU or CUDA environment first.
+Then run these commands from this directory:
 
 ```bash
+python -m pip install --upgrade pip setuptools wheel
+PP2D_SKIP_CREATE=1 bash setup_env.sh
 python -m pip install -e . --no-deps --no-build-isolation
 ```
 
 Dependencies are recorded in `requirements.txt`. The editable install is run
 with `--no-deps` because torch and torch_geometric must match the machine CUDA
 stack. `setup_env.sh` installs the non-torch dependency set after a compatible
-torch stack is present:
-
-```bash
-PP2D_SKIP_CREATE=1 bash setup_env.sh
-```
+torch stack is present.
 
 Set `PP2D_INSTALL_TORCH_STACK=1` only when the torch stack in
 `requirements.txt` already matches the target machine.
@@ -169,7 +175,7 @@ python scripts/inference.py \
   --disable_sampling
 ```
 
-DPO quick inference check on the T2 paper input:
+Generate a small DPO sample on two T2 benchmark inputs:
 
 ```bash
 python scripts/inference.py \
@@ -181,10 +187,9 @@ python scripts/inference.py \
   --split_key test \
   --output_dir outputs/inference/polytamgen-dpo-T2-quick-check \
   --num_return_sequences 1 \
-  --max_new_tokens 1 \
+  --max_new_tokens 256 \
   --limit 2 \
-  --batch_size 1 \
-  --disable_sampling
+  --batch_size 1
 ```
 
 ### Preparing New Multi-Target Inputs
@@ -260,9 +265,11 @@ conda run -n pp2d python scripts/inference.py \
   --top_k 100
 ```
 
-For full paper-style generation, omit `--limit`, increase
-`--num_return_sequences` to the intended sampling scale, and use the T2 or T3
-paths under `data/pdb_multitarget/`. Multi-GPU inference is available with
+For benchmark-scale generation, omit `--limit`, increase
+`--num_return_sequences` to the intended sampling scale, keep sampling enabled
+and `--max_new_tokens 256`, and use the T2 or T3 paths under
+`data/pdb_multitarget/`. Choose a separate output directory for the full run.
+Multi-GPU inference is available with
 `--devices 0,1,2,3`; the script shards the selected split and merges
 `combined_inference_results.json`.
 
@@ -302,7 +309,9 @@ python scripts/benchmark/benchmark_multitarget_docking.py \
 For T3, use `scripts/benchmark/configs/t3_inputs.yaml` and
 `data/pdb_benchmark/test_T3.tsv`.
 
-The paper-alignment check uses the result files under `results/`:
+The verifier recomputes the revised main-table metrics from the scored files
+and checks the revised derived artifacts. It retains the manuscript's
+reference values, including the two known standard-deviation mismatches:
 
 ```bash
 python scripts/paper/verify_paper_alignment.py
@@ -322,8 +331,12 @@ results/scored/T2/per_molecule.json
 results/scored/T3/per_molecule.json
 ```
 
-They are full benchmark scored sources and reproduce the T2/T3 main
-paper tables exactly. The raw-generation rebuild path writes only under
+They contain molecule-level scores for the full archived benchmarks. The
+table builder and verifier use the revised main cutoff; passing the old
+stored strict-success flag through unchanged is not sufficient. See
+[release scope](../../REPRODUCIBILITY.md#release-scope) before comparing
+outputs with manuscript tables. The raw-generation rebuild path
+writes only under
 `outputs/raw_generation_rebuild/` and is an auxiliary consistency check rather
 than the scored source for paper table reproduction.
 

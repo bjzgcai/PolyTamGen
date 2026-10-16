@@ -409,7 +409,12 @@ def main() -> None:
             )
 
     if not args.skip_verifier:
-        code, stdout, stderr = run_command([sys.executable, "scripts/paper/verify_paper_alignment.py"], cwd)
+        code, stdout, stderr = run_command([
+            sys.executable, "scripts/paper/verify_paper_alignment.py",
+            "--results-root", str(results_root),
+            "--out-json", str(output_dir / "paper_alignment_report.json"),
+            "--out-md", str(output_dir / "paper_alignment_report.md"),
+        ], cwd)
         checks.append(
             {
                 "name": "verify_paper_alignment",

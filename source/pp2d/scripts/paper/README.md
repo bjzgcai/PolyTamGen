@@ -6,7 +6,7 @@ so `results/` exists next to `scripts/`.
 Files:
 
 - `reproduce_benchmark_results.py`: benchmark reproduction entry point. It validates `results/benchmark/manifest.csv`, checks raw-generation SMILES alignment against scored rows, rebuilds T2/T3 consistency tables from scored `per_molecule.json`, and runs the alignment verifier.
-- `verify_paper_alignment.py`: verifies stored artifacts against the paper numbers. This is the main alignment check.
+- `verify_paper_alignment.py`: recomputes main-table metrics at `AvgDock < -8.18` and checks the revised weakest-target and rank-matched target-conditioning outputs against manuscript reference values. It accepts `--results-root`, writes reports under `outputs/paper_reproduction/` by default, and never writes into the input results tree.
 - `build_paper_artifacts.py`: rebuilds available figures under `outputs/paper_rebuild/`, optionally rebuilds molecule-level consistency tables, and then runs the alignment verifier.
 - `rebuild_per_molecule_from_raw.py`: recomputes compact auxiliary molecule rows from raw generation JSONs and available per-pocket docking scores under `outputs/raw_generation_rebuild/`.
 - `plot_joint_distribution.py`: rebuilds the joint distribution figure from per-molecule scored data.
@@ -14,8 +14,13 @@ Files:
 
 The scored files used for paper table reproduction are
 `results/scored/T2/per_molecule.json` and
-`results/scored/T3/per_molecule.json`. They reproduce the T2/T3 main paper
-tables exactly.
+`results/scored/T3/per_molecule.json`. The builder and verifier share the same
+context-level metric calculation. The main cutoff is `-8.18`; `-7.0` is an
+explicit sensitivity setting. See the
+[release scope](../../../../REPRODUCIBILITY.md#release-scope) and
+[known table differences](../../../../REPRODUCIBILITY.md#known-table-differences)
+before interpreting the full verifier's exit status. Use the `2026.10.16`
+results bundle, which includes the revised target-conditioning outputs.
 
 The raw generation files can also be rebuilt into compact auxiliary molecule
 rows with RDKit properties plus available per-pocket docking scores:
@@ -31,6 +36,10 @@ python scripts/paper/reproduce_benchmark_results.py
 ```
 
 It writes `outputs/paper_reproduction/reproduction_report.{json,md}`.
+The verifier reads the same `--results-root` as the reproduction command and
+writes its JSON/Markdown reports into that command's output directory. When
+using an external results tree, also point `--manifest` to that tree's
+`benchmark/manifest.csv`.
 
 The lower-level T2/T3 main-table consistency check uses the scored files:
 

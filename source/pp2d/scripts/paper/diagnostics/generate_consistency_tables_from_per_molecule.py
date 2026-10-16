@@ -12,6 +12,8 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+MAIN_DOCK_THRESHOLD = -8.18
+
 
 def load_per_molecule(path: Path) -> pd.DataFrame:
     if not path.exists():
@@ -40,7 +42,7 @@ def pair_level_stats(
     method: str,
     pair_cols: List[str],
     strict_use_qed_sa: bool,
-    strict_threshold: float = -7.0,
+    strict_threshold: float = MAIN_DOCK_THRESHOLD,
 ) -> pd.DataFrame:
     sub = df[df["method"] == method].copy()
     if sub.empty:
@@ -85,7 +87,8 @@ def fmt_mean_std(val: Tuple[float, float], decimals: int = 3) -> str:
     return f"{m:.{decimals}f} $\\pm$ {s:.{decimals}f}"
 
 
-def table1_t2(df: pd.DataFrame, out_path: Path, decimals: int = 3, num_workers: int = 1) -> None:
+def table1_t2(df: pd.DataFrame, out_path: Path, decimals: int = 3, num_workers: int = 1,
+              strict_threshold: float = MAIN_DOCK_THRESHOLD) -> None:
     pair_cols = ["ref_smiles"] + pocket_cols_from_df(df)
 
     rows = [
@@ -96,7 +99,7 @@ def table1_t2(df: pd.DataFrame, out_path: Path, decimals: int = 3, num_workers: 
         ("\\ourM{}-DPO", "PolyTamGen-DPO"),
     ]
 
-    jobs = [(method, pair_cols, True) for _, method in rows]
+    jobs = [(method, pair_cols, True, strict_threshold) for _, method in rows]
     stats_map = dict(_parallel_map(df, jobs, _pair_stats_worker, num_workers, "T2 stats"))
 
     lines = []
@@ -119,7 +122,7 @@ def table1_t2(df: pd.DataFrame, out_path: Path, decimals: int = 3, num_workers: 
     header = [
         "Method",
         "AvgDock",
-        "SR\\_strict",
+        f"SR\\_strict@{strict_threshold}",
         "Validity",
         "Diversity",
         "QED",
@@ -135,20 +138,25 @@ def _init_worker(df: pd.DataFrame) -> None:
 
 
 def _pair_stats_worker(args):
-    method, pair_cols, strict_use_qed_sa = args
-    return method, pair_level_stats(_GLOBAL_DF, method, pair_cols, strict_use_qed_sa)
+    method, pair_cols, strict_use_qed_sa, strict_threshold = args
+    return method, pair_level_stats(_GLOBAL_DF, method, pair_cols, strict_use_qed_sa, strict_threshold)
 
 
 def _parallel_map(df: pd.DataFrame, jobs: List[Tuple], worker, num_workers: int, desc: str):
+    global _GLOBAL_DF
     if num_workers <= 1:
         _init_worker(df)
-        return [worker(j) for j in tqdm(jobs, desc=desc)]
+        try:
+            return [worker(j) for j in tqdm(jobs, desc=desc)]
+        finally:
+            _GLOBAL_DF = None
     ctx = mp.get_context("fork")
     with ctx.Pool(processes=num_workers, initializer=_init_worker, initargs=(df,)) as pool:
         return list(tqdm(pool.imap(worker, jobs, chunksize=1), total=len(jobs), desc=desc))
 
 
-def table3_t3(df: pd.DataFrame, out_path: Path, decimals: int = 3, num_workers: int = 1) -> None:
+def table3_t3(df: pd.DataFrame, out_path: Path, decimals: int = 3, num_workers: int = 1,
+              strict_threshold: float = MAIN_DOCK_THRESHOLD) -> None:
     pair_cols = ["ref_smiles"] + pocket_cols_from_df(df)
 
     rows = [
@@ -158,7 +166,7 @@ def table3_t3(df: pd.DataFrame, out_path: Path, decimals: int = 3, num_workers: 
         ("\\ourM{}-DPO", "PolyTamGen-DPO"),
     ]
 
-    jobs = [(method, pair_cols, True) for _, method in rows]
+    jobs = [(method, pair_cols, True, strict_threshold) for _, method in rows]
     stats_map = dict(_parallel_map(df, jobs, _pair_stats_worker, num_workers, "T3 stats"))
 
     lines = []
@@ -178,7 +186,7 @@ def table3_t3(df: pd.DataFrame, out_path: Path, decimals: int = 3, num_workers: 
         ]
         lines.append(line)
 
-    header = ["Method", "AvgDock", "SR\\_strict", "Validity", "Diversity", "QED", "SA"]
+    header = ["Method", "AvgDock", f"SR\\_strict@{strict_threshold}", "Validity", "Diversity", "QED", "SA"]
     tex = render_table(header, lines)
     out_path.write_text(tex)
 
@@ -204,16 +212,18 @@ def main() -> None:
     p.add_argument("--output_dir", default="outputs/paper_rebuild/consistency_tables")
     p.add_argument("--decimals", type=int, default=3)
     p.add_argument("--num_workers", type=int, default=4)
+    p.add_argument("--strict-threshold", type=float, default=MAIN_DOCK_THRESHOLD,
+                   help="AvgDock cutoff; use -7.0 only for labelled sensitivity output.")
     args = p.parse_args()
 
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     df_t2 = load_per_molecule(Path(args.t2_path))
+    table1_t2(df_t2, out_dir / "table1_t2_main.tex", args.decimals, args.num_workers, args.strict_threshold)
+    del df_t2
     df_t3 = load_per_molecule(Path(args.t3_path))
-
-    table1_t2(df_t2, out_dir / "table1_t2_main.tex", args.decimals, args.num_workers)
-    table3_t3(df_t3, out_dir / "table3_t3_stress.tex", args.decimals, args.num_workers)
+    table3_t3(df_t3, out_dir / "table3_t3_stress.tex", args.decimals, args.num_workers, args.strict_threshold)
 
     print(f"Saved molecule-level consistency LaTeX tables to {out_dir}")
 

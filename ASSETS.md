@@ -6,7 +6,12 @@ archives and are not tracked by git.
 
 ## Zenodo Record
 
-The Zenodo record is DOI `10.5281/zenodo.20594128`.
+The Zenodo record is DOI `10.5281/zenodo.23417382`, version `2026.10.16`.
+It updates the derived results while keeping the data archive, base LLM,
+and DPO checkpoint unchanged. The original `2026.06.11` record remains at
+DOI `10.5281/zenodo.20594128`. See
+[release scope](REPRODUCIBILITY.md#release-scope) for the verifier's input
+requirements and known table differences.
 
 ## Asset Files
 
@@ -16,9 +21,10 @@ The Zenodo record is DOI `10.5281/zenodo.20594128`.
   PolyTamGen configs for checkpoint inference.
 - `polytamgen-dpo.pth`: final PolyTamGen-DPO checkpoint used for the main
   benchmark generation.
-- `polytamgen_full_results.tar.gz`: current benchmark result bundle, including
+- `polytamgen_full_results.tar.gz`: revised benchmark result bundle, including
   molecule-level scored results, raw-generation outputs, supplement materials,
-  figures, and analysis inputs used to reproduce the reported paper metrics.
+  figures, revised main tables, rank-matched conditioning outputs, and the
+  full verification report with two known standard-deviation mismatches.
 
 ## Where To Extract
 
@@ -40,5 +46,5 @@ Place `polytamgen-dpo.pth` at
 The expected asset paths are listed in `ASSET_MANIFEST.csv`. Without the result
 and data archives, you can read and install the source but commands that load
 benchmark results, LMDB feature stores, or training profiles will fail. Without
-the base LLM and DPO checkpoint, paper-result checks from downloaded full
+the base LLM and DPO checkpoint, archived-result checks from downloaded full
 results still work, but checkpoint inference or training will not run.

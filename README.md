@@ -1,21 +1,30 @@
 # PolyTamGen
 
-PolyTamGen is a multi-target molecule generation framework for designing
-compounds against two or more protein targets. This repository contains the
-source code, lightweight metadata, and external-asset instructions needed to
-reproduce the paper tables and supplement analyses.
+Official implementation of [Polypharmacological Target-Aware Molecule
+Generation](https://doi.org/10.1093/bioinformatics/btag766)
+(*Bioinformatics*, 2026).
 
-Developed by researchers affiliated with Zhongguancun Academy, University of
-Science and Technology of China, and Global Health Drug Discovery Institute.
+[Paper](https://doi.org/10.1093/bioinformatics/btag766) ·
+[Data, models, and results](https://doi.org/10.5281/zenodo.23417382) ·
+[Reproducibility guide](REPRODUCIBILITY.md)
 
-The repository covers three main workflows:
+PolyTamGen generates molecules conditioned on two or more protein targets.
+ESM3 encodes the proteins, an attention module compresses their features into
+tokens, and an autoregressive model uses those tokens to generate a ligand.
+Training uses supervised fine-tuning (SFT), followed by Direct Preference
+Optimization (DPO) with docking-based affinity proxies and drug-likeness.
 
-- Training PolyTamGen with supervised fine-tuning and preference optimization.
-- Running T2 and T3 multi-target molecule generation benchmarks.
-- Recomputing the reported benchmark values and supplement figures from the
-  downloaded result files.
+This repository includes the source code, lightweight metadata, and download
+instructions for the released training and benchmark assets. You can train
+PolyTamGen with SFT and DPO, run the dual-target (T2) and triple-target (T3)
+generation benchmarks, or recompute analyses from the archived results.
 
-## Repository Contents
+![PolyTamGen architecture: ESM3 protein encoding, protein adapter, set-wise interaction, and token injection into NatureLM for molecule generation, with SFT and DPO training.](docs/images/framework.png)
+
+Model overview from the paper. Protein tokens interact across targets before
+they condition NatureLM. [View the original PDF](docs/images/framework.pdf).
+
+## Repository contents
 
 ```text
 source/pp2d/        Installable PolyTamGen package, configs, scripts, tests
@@ -23,38 +32,44 @@ results/            Download note for the external full-results archive
 models/             Model archive notes; runtime model paths live under source/pp2d/models
 data/               Data archive notes; runtime data paths live under source/pp2d/data
 ASSETS.md           External archive layout and manifest notes
-REPRODUCIBILITY.md  Step-by-step paper-result reproduction guide
+REPRODUCIBILITY.md  Release scope and archived-result reproduction guide
 ```
 
 ## Setup
 
-Create a Python environment with the dependencies in
-`source/pp2d/requirements.txt`, then install the package in editable mode:
-
-
-
+Create and activate the Conda environment:
 
 ```bash
-cd source/pp2d
+git clone https://github.com/bjzgcai/PolyTamGen.git
+cd PolyTamGen/source/pp2d
 conda create -y -n pp2d python=3.12
 conda activate pp2d
-PP2D_SKIP_CREATE=1 bash setup_env.sh
 ```
 
-Install the PyTorch, PyTorch Geometric, and CUDA packages that match the target
-machine before running GPU workloads. Set `PP2D_INSTALL_TORCH_STACK=1` only when
-the torch stack listed in `requirements.txt` is appropriate for that machine.
+Install PyTorch and PyTorch Geometric builds that match your CPU or CUDA
+environment before running the dependency helper. Then, from
+`source/pp2d/`, install the remaining dependencies and the package:
 
-## Model And Data Assets
+```bash
+python -m pip install --upgrade pip setuptools wheel
+PP2D_SKIP_CREATE=1 bash setup_env.sh
+python -m pip install -e . --no-deps --no-build-isolation
+```
 
-Large model, data, and result payloads are available as Zenodo files
-and are not tracked by git. The public Zenodo record is
-https://zenodo.org/records/20594128 (DOI: `10.5281/zenodo.20594128`).
-Extract or place assets under `source/pp2d/`, because
-command examples are run from that directory and use relative paths such as
-`models/`, `data/`, and `results/`.
+Set `PP2D_INSTALL_TORCH_STACK=1` when invoking the helper only if the torch
+packages in `requirements.txt` suit your environment. Each example below
+assumes you start from the repository root.
 
-Model assets should be placed at:
+## Model and data assets
+
+Download the model, data, and result files from
+[Zenodo record 23417382](https://zenodo.org/records/23417382)
+(DOI: [10.5281/zenodo.23417382](https://doi.org/10.5281/zenodo.23417382)).
+These large files are stored separately from Git. Put them under
+`source/pp2d/`; the command examples run from that directory and use relative
+paths such as `models/`, `data/`, and `results/`.
+
+Use these paths for the models:
 
 ```text
 source/pp2d/models/polytamgen-dpo/polytamgen-dpo.pth
@@ -65,12 +80,12 @@ Download `polytamgen-dpo.pth` and place it under
 `source/pp2d/models/polytamgen-dpo/`. Extract `base-llm_NLM-1b.tar` from
 `source/pp2d/models/` so it creates `source/pp2d/models/base-llm/NLM-1b/`.
 
-The result archive is `polytamgen_full_results.tar.gz`; after
-extraction it should provide `source/pp2d/results/`, including scored
-T2/T3 metrics, raw generations, supplement outputs, figures, and analysis
-inputs. See `ASSETS.md` and `ASSET_MANIFEST.csv` for the expected layout.
+Extract `polytamgen_full_results.tar.gz` so that `source/pp2d/results/`
+contains the scored T2/T3 metrics, raw generations, supplementary outputs,
+figures, and analysis inputs. See `ASSETS.md` and `ASSET_MANIFEST.csv` for the
+expected layout.
 
-Processed datasets are stored under `source/pp2d/data/`:
+Put the processed datasets under `source/pp2d/data/`:
 
 ```text
 sft_train_valid/       SFT training and validation profiles
@@ -79,15 +94,19 @@ pdb_benchmark/         Benchmark TSVs, pocket sequences, and docking pockets
 dpo_preferences/       Preference pairs used for DPO training
 ```
 
-## Paper Results
+## Paper results
 
-Paper-result files are provided by `polytamgen_full_results.tar.gz`.
-Extract it before running the main paper-alignment checks. Start with
-`REPRODUCIBILITY.md` for the validated reproduction workflow.
+The post-processing scripts and results bundle for version `2026.10.16` use
+the revised main cutoff, `AvgDock < -8.18`, and rank-matched target-conditioning
+outputs. The raw scores and generations are unchanged from the earlier release.
+
+See [release scope](REPRODUCIBILITY.md#release-scope) for the required files
+and [known table differences](REPRODUCIBILITY.md#known-table-differences)
+for two standard deviations that do not match the revised manuscript.
 
 ## Inference
 
-PolyTamGen-DPO quick inference check on the T2 benchmark input:
+Generate a small sample with PolyTamGen-DPO on two T2 benchmark inputs:
 
 ```bash
 cd source/pp2d
@@ -100,15 +119,15 @@ python scripts/inference.py \
   --split_key test \
   --output_dir outputs/inference/polytamgen-dpo-quick-check \
   --num_return_sequences 1 \
-  --max_new_tokens 1 \
+  --max_new_tokens 256 \
   --limit 2 \
-  --batch_size 1 \
-  --disable_sampling
+  --batch_size 1
 ```
 
-Remove `--limit` and increase `--num_return_sequences` for full benchmark-scale
-generation. Additional inference examples are documented in
-`source/pp2d/README.md`.
+For full benchmark-scale generation, remove `--limit` and increase
+`--num_return_sequences`. Keep sampling enabled and the generation limit at
+`--max_new_tokens 256`, and choose a separate output directory for the full
+run. More inference examples are in `source/pp2d/README.md`.
 
 ## Training
 
@@ -126,14 +145,15 @@ cd source/pp2d
 python scripts/train_dpo.py --config configs/polytamgen_dpo.yaml
 ```
 
-For a quick configuration check, add `--dry_run` to either command. To force a
-small CPU-friendly run, add:
+Add `--dry_run` to either command to run one training and one validation
+micro-batch without saving checkpoints. This still loads the model and data.
+To reduce the workload for a CPU run, add:
 
 ```text
 --distributed false --batch_size 1 --num_workers 0 --train_subset true --train_subset_size 1 --valid_subset true --valid_subset_size 1
 ```
 
-The DPO preferences are built from scored T2 results with:
+Build DPO preference pairs from the scored T2 results:
 
 ```bash
 cd source/pp2d
@@ -155,12 +175,29 @@ Full DPO retraining starts from an SFT checkpoint produced by the SFT stage.
 
 ## Notes
 
-- Numeric table checks are aligned to the precision reported in the paper.
-- A full docking rerun requires the docking software stack and sufficient GPU or
-  CPU compute; the provided scored files are the reference inputs for paper
-  table reproduction.
-- The numeric reproduction scripts regenerate the table values and available
-  analysis figures from the released result files.
-- Model assets provide the DPO checkpoint and base LLM. Data and result
-  archives are distributed separately and should preserve the logical paths
-  documented in `ASSETS.md`.
+- Table checks retain the revised manuscript's reference values and reporting precision.
+- To rerun docking, you need the docking software stack and sufficient GPU or
+  CPU compute. Use the released scored files as reference inputs when
+  recomputing tables under the revised cutoff.
+- The reproduction scripts recompute table values and available analysis
+  figures from the released results.
+- The model assets include the DPO checkpoint and base LLM. Download the data
+  and result archives separately and keep the paths documented in `ASSETS.md`.
+
+## Citation
+
+If you use PolyTamGen in your research, please cite:
+
+```bibtex
+@article{wu2026polytamgen,
+  author  = {Wu, Kehan and Zhang, Wei and Guo, Han and Liu, Renhe and
+             Shi, Yu and Jin, Peiran and Liu, Haiguang and Chen, Enhong and
+             Qin, Tao and Liu, Zequn and Xia, Yingce},
+  title   = {Polypharmacological Target-Aware Molecule Generation},
+  journal = {Bioinformatics},
+  year    = {2026},
+  pages   = {btag766},
+  doi     = {10.1093/bioinformatics/btag766},
+  url     = {https://doi.org/10.1093/bioinformatics/btag766}
+}
+```

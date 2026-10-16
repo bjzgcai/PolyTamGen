@@ -9,8 +9,14 @@ import json
 import math
 import re
 import sys
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+
+from diagnostics.generate_consistency_tables_from_per_molecule import (
+    MAIN_DOCK_THRESHOLD,
+    pair_level_stats,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -18,17 +24,17 @@ RESULTS = ROOT / "results"
 
 MAIN_TABLE_EXPECTED = {
     "T2": {
-        "TamGen": [(-6.536, 0.997), (0.306, 0.281), (0.998, 0.003), (0.863, 0.008), (0.495, 0.045), (0.717, 0.013)],
-        "PocketXMol": [(-6.581, 1.503), (0.356, 0.302), (0.999, 0.004), (0.863, 0.047), (0.533, 0.081), (0.787, 0.063)],
-        "\\ourM{}-Single": [(-6.989, 0.877), (0.380, 0.239), (0.936, 0.030), (0.878, 0.007), (0.407, 0.044), (0.746, 0.021)],
-        "\\ourM{}-SFT": [(-7.347, 1.017), (0.475, 0.290), (0.959, 0.046), (0.864, 0.025), (0.408, 0.084), (0.753, 0.048)],
-        "\\ourM{}-DPO": [(-7.642, 1.064), (0.648, 0.338), (0.968, 0.110), (0.837, 0.041), (0.565, 0.069), (0.805, 0.032)],
+        "TamGen": [(-6.536, 0.997), (0.073, 0.110), (0.998, 0.003), (0.863, 0.008), (0.495, 0.045), (0.717, 0.013)],
+        "PocketXMol": [(-6.581, 1.503), (0.163, 0.203), (0.999, 0.004), (0.863, 0.047), (0.533, 0.081), (0.787, 0.063)],
+        "\\ourM{}-Single": [(-6.989, 0.877), (0.148, 0.157), (0.936, 0.030), (0.878, 0.007), (0.407, 0.044), (0.746, 0.021)],
+        "\\ourM{}-SFT": [(-7.347, 1.017), (0.226, 0.233), (0.959, 0.046), (0.864, 0.025), (0.408, 0.084), (0.753, 0.048)],
+        "\\ourM{}-DPO": [(-7.642, 1.064), (0.331, 0.330), (0.968, 0.110), (0.837, 0.041), (0.565, 0.069), (0.805, 0.032)],
     },
     "T3": {
-        "TamGen": [(-6.737, 0.734), (0.348, 0.245), (0.998, 0.003), (0.866, 0.004), (0.488, 0.028), (0.715, 0.008)],
-        "PocketXMol": [(-6.788, 1.114), (0.413, 0.277), (1.000, 0.001), (0.858, 0.053), (0.531, 0.068), (0.778, 0.054)],
-        "\\ourM{}-SFT": [(-7.540, 0.793), (0.546, 0.240), (0.948, 0.053), (0.865, 0.020), (0.395, 0.075), (0.742, 0.049)],
-        "\\ourM{}-DPO": [(-7.918, 0.819), (0.767, 0.264), (0.966, 0.079), (0.841, 0.019), (0.567, 0.068), (0.806, 0.029)],
+        "TamGen": [(-6.737, 0.734), (0.057, 0.069), (0.998, 0.003), (0.866, 0.004), (0.488, 0.028), (0.715, 0.008)],
+        "PocketXMol": [(-6.788, 1.114), (0.146, 0.165), (1.000, 0.001), (0.858, 0.053), (0.531, 0.068), (0.778, 0.054)],
+        "\\ourM{}-SFT": [(-7.540, 0.793), (0.239, 0.202), (0.948, 0.053), (0.865, 0.020), (0.395, 0.075), (0.742, 0.049)],
+        "\\ourM{}-DPO": [(-7.918, 0.819), (0.405, 0.316), (0.966, 0.079), (0.841, 0.019), (0.567, 0.068), (0.806, 0.029)],
     },
 }
 
@@ -147,30 +153,16 @@ def check_main_scored(
     table_name: str,
     expected: Dict[str, Sequence[Tuple[float, float]]],
 ) -> None:
-    import numpy as np
-
     metrics = ["AvgDock", "SR_strict", "Validity", "Diversity", "QED", "SA"]
     agg_cols = ["avgdock", "sr_strict", "validity", "diversity", "qed", "sa"]
     df = load_per_molecule_dataframe(path)
     pair_cols = ["ref_smiles"] + pocket_cols_from_df(df)
     for label, pairs in expected.items():
         method = MAIN_METHOD_MAP.get(label, label)
-        sub = df[df["method"] == method].copy()
-        for col in ["validity", "diversity", "qed", "sa_norm"]:
-            if col not in sub.columns:
-                sub[col] = np.nan
-        dock_avg = sub["dock_avg"].astype(float)
-        strict = (dock_avg < -7.0) & (sub["qed"].astype(float) > 0.25) & (sub["sa_norm"].astype(float) > 0.59)
-        strict = strict.where(np.isfinite(dock_avg), np.nan)
-        sub["strict"] = strict.astype(float)
-        agg = sub.groupby(pair_cols).agg(
-            avgdock=("dock_avg", "mean"),
-            sr_strict=("strict", "mean"),
-            validity=("validity", "mean"),
-            diversity=("diversity", "mean"),
-            qed=("qed", "mean"),
-            sa=("sa_norm", "mean"),
-        )
+        agg = pair_level_stats(df, method, pair_cols, strict_use_qed_sa=True)
+        if agg.empty:
+            add(checks, f"{table_name}.{label}.scored_rows_present", False, True, path, decimals=None)
+            continue
         for metric, col, (exp_mean, exp_std) in zip(metrics, agg_cols, pairs):
             actual_mean, actual_std = mean_std_from_series(agg[col])
             add(checks, f"{table_name}.{label}.{metric}.mean", actual_mean, exp_mean, path)
@@ -180,18 +172,23 @@ def check_main_scored(
 def check_weakest(checks: List[Dict[str, Any]]) -> None:
     path = RESULTS / "tables/supplement/table_t2_weakest_target.tex"
     if not path.exists():
+        add(checks, "weakest.table_present", False, True, path, decimals=None)
         return
     expected = {
-        "TamGen": (-6.017, 0.176),
-        "PocketXMol": (-5.836, 0.211),
-        "\\ourM{}-Single": (-6.421, 0.206),
-        "\\ourM{}-SFT": (-6.753, 0.287),
-        "\\ourM{}-DPO": (-7.048, 0.454),
+        "TamGen": (-6.017, 0.033, 0.176),
+        "PocketXMol": (-5.836, 0.074, 0.211),
+        "\\ourM{}-Single": (-6.421, 0.064, 0.206),
+        "\\ourM{}-SFT": (-6.753, 0.108, 0.287),
+        "\\ourM{}-DPO": (-7.048, 0.186, 0.454),
     }
-    for needle, (dock, sr) in expected.items():
+    for needle, (dock, sr, sensitivity_sr) in expected.items():
         values = latex_row(path, needle)
+        if len(values) != 3:
+            add(checks, f"weakest.{needle}.column_count", len(values), 3, path, decimals=None)
+            continue
         add(checks, f"weakest.{needle}.worst_dock", values[0], dock, path)
-        add(checks, f"weakest.{needle}.SR_strict_worst", values[1], sr, path)
+        add(checks, f"weakest.{needle}.SR_strict_worst@-8.18", values[1], sr, path)
+        add(checks, f"weakest.{needle}.SR_strict_worst@-7.0", values[2], sensitivity_sr, path)
 
 
 def check_winrate(checks: List[Dict[str, Any]]) -> None:
@@ -379,6 +376,69 @@ def check_setwise_redock_results(checks: List[Dict[str, Any]]) -> None:
     add(checks, "setwise_redock.table_counts.set_interaction_ablation", table_counts["set_interaction_ablation"], 1510, counts_path, decimals=None)
 
 
+def check_target_conditioning(checks: List[Dict[str, Any]]) -> None:
+    summary_path = RESULTS / "supplement/cross_target/target_conditioning_summary.json"
+    pairs_path = RESULTS / "supplement/cross_target/rank_matched_conditioning_pairs.csv"
+    for path in (summary_path, pairs_path):
+        add(checks, f"target_conditioning.input.{path.name}", path.is_file(), True, path, decimals=None)
+    if not summary_path.is_file() or not pairs_path.is_file():
+        return
+
+    summary = load_json(summary_path)
+    coverage = summary["coverage"]
+    scores = summary["scores_kcal_per_mol"]
+    for key, expected in [("paired_contexts", 151), ("paired_rank_molecule_pairs", 1300)]:
+        add(checks, f"target_conditioning.{key}", coverage[key], expected, summary_path, decimals=None)
+
+    totals = defaultdict(lambda: [0.0, 0.0, 0])
+    seen = set()
+    invalid_rows = duplicate_ranks = delta_mismatches = row_count = 0
+    with pairs_path.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            row_count += 1
+            key = (row["target_id"], row["source_rank"])
+            duplicate_ranks += int(key in seen)
+            seen.add(key)
+            ab = finite_float(row["ab_conditioned_on_ab"])
+            c = finite_float(row["c_conditioned_on_ab"])
+            delta = finite_float(row["conditioning_advantage"])
+            if not all(math.isfinite(value) for value in (ab, c, delta)):
+                invalid_rows += 1
+                continue
+            delta_mismatches += int(not math.isclose(delta, c - ab, abs_tol=1e-9, rel_tol=0.0))
+            total = totals[row["target_id"]]
+            total[0] += ab
+            total[1] += c
+            total[2] += 1
+
+    for name, actual, expected in [
+        ("csv_rows", row_count, coverage["paired_rank_molecule_pairs"]),
+        ("csv_contexts", len(totals), coverage["paired_contexts"]),
+        ("invalid_rows", invalid_rows, 0),
+        ("duplicate_ranks", duplicate_ranks, 0),
+        ("delta_mismatches", delta_mismatches, 0),
+    ]:
+        add(checks, f"target_conditioning.{name}", actual, expected, pairs_path, decimals=None)
+
+    context_ab = [ab / count for ab, _, count in totals.values()]
+    context_c = [c / count for _, c, count in totals.values()]
+    ab_mean = sum(context_ab) / len(context_ab) if context_ab else float("nan")
+    c_mean = sum(context_c) / len(context_c) if context_c else float("nan")
+    for key, actual, expected in [
+        ("ab_conditioned_on_ab_context_equal_mean", ab_mean, -7.670),
+        ("c_conditioned_on_ab_context_equal_mean", c_mean, -6.969),
+        ("conditioning_advantage_c_minus_ab_context_equal_mean", c_mean - ab_mean, 0.701),
+    ]:
+        add(checks, f"target_conditioning.csv.{key}", actual, scores[key], pairs_path, decimals=9)
+        add(checks, f"target_conditioning.paper.{key}", actual, expected, pairs_path)
+
+    interval = scores["conditioning_advantage_context_bootstrap_95ci"]
+    add(checks, "target_conditioning.bootstrap.ci_low", interval[0], 0.613, summary_path)
+    add(checks, "target_conditioning.bootstrap.ci_high", interval[1], 0.790, summary_path)
+    for key, expected in [("unit", "target context"), ("replicates", 10000), ("seed", 20260823)]:
+        add(checks, f"target_conditioning.bootstrap.{key}", summary["bootstrap"][key], expected, summary_path, decimals=None)
+
+
 def check_json_artifacts(checks: List[Dict[str, Any]]) -> None:
     flex_path = RESULTS / "supplement/flexribbon/t2_rdkit_aligned_summary.json"
     flex = load_json(flex_path)
@@ -401,21 +461,7 @@ def check_json_artifacts(checks: List[Dict[str, Any]]) -> None:
         add(checks, f"flexribbon_distribution.{label}.Worst", flex_dist[label]["WorstAffinity"], worst, flex_dist_path, decimals=4)
         add(checks, f"flexribbon_distribution.{label}.n_instances", flex_dist[label]["n_instances"], count, flex_dist_path, decimals=None)
 
-    cross_path = RESULTS / "supplement/cross_target/summary.json"
-    cross = load_json(cross_path)
-    top5 = cross["topk_summaries"]["5"]
-    add(checks, "cross_target.paper_task_count", cross["paper_task_count"], 151, cross_path, decimals=None)
-    add(
-        checks,
-        "cross_target.scored_task_count",
-        top5["num_pairs"],
-        150,
-        cross_path,
-        decimals=None,
-        note="150 is the scored subset behind the paper's -8.038/-7.232 means.",
-    )
-    add(checks, "cross_target.AB_to_AB", top5["ab_to_ab_mean"], -8.038, cross_path)
-    add(checks, "cross_target.AB_to_C", top5["ab_to_c_mean"], -7.232, cross_path)
+    check_target_conditioning(checks)
 
     strain_path = RESULTS / "supplement/strain/summary.json"
     strain = load_json(strain_path)["topk_summaries"]["5"]
@@ -518,10 +564,12 @@ def check_figures(checks: List[Dict[str, Any]]) -> None:
 
 def write_report(checks: List[Dict[str, Any]], out_json: Path, out_md: Path) -> None:
     out_json.parent.mkdir(parents=True, exist_ok=True)
+    out_md.parent.mkdir(parents=True, exist_ok=True)
     failures = [c for c in checks if c["status"] == "fail"]
     warnings = [c for c in checks if c["status"] == "warn"]
     payload = {
         "status": "fail" if failures else "ok",
+        "main_success_rate_threshold": MAIN_DOCK_THRESHOLD,
         "num_checks": len(checks),
         "num_failures": len(failures),
         "num_warnings": len(warnings),
@@ -533,6 +581,7 @@ def write_report(checks: List[Dict[str, Any]], out_json: Path, out_md: Path) -> 
         "# Paper Alignment Report",
         "",
         f"Status: {payload['status']}",
+        f"Main strict-success AvgDock cutoff: {MAIN_DOCK_THRESHOLD}",
         f"Checks: {len(checks)}",
         f"Failures: {len(failures)}",
         f"Warnings: {len(warnings)}",
@@ -548,12 +597,15 @@ def write_report(checks: List[Dict[str, Any]], out_json: Path, out_md: Path) -> 
 
 
 def main() -> None:
+    global RESULTS
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--out-json", type=Path, default=RESULTS / "tables/recomputed/paper_alignment_report.json")
-    parser.add_argument("--out-md", type=Path, default=RESULTS / "tables/recomputed/paper_alignment_report.md")
+    parser.add_argument("--results-root", type=Path, default=RESULTS)
+    parser.add_argument("--out-json", type=Path, default=ROOT / "outputs/paper_reproduction/paper_alignment_report.json")
+    parser.add_argument("--out-md", type=Path, default=ROOT / "outputs/paper_reproduction/paper_alignment_report.md")
     parser.add_argument("--no-write", action="store_true")
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args()
+    RESULTS = args.results_root.expanduser().resolve()
 
     checks: List[Dict[str, Any]] = []
 
