@@ -9,8 +9,9 @@ Generation](https://doi.org/10.1093/bioinformatics/btag766)
 [Reproducibility guide](REPRODUCIBILITY.md)
 
 PolyTamGen generates molecules conditioned on two or more protein targets.
-ESM3 encodes the proteins, an attention module compresses their features into
-tokens, and an autoregressive model uses those tokens to generate a ligand.
+ESM-C 600M encodes the protein sequences. An attention module compresses their
+features into tokens, and an autoregressive model uses those tokens to generate
+a ligand.
 Training uses supervised fine-tuning (SFT), followed by Direct Preference
 Optimization (DPO) with docking-based affinity proxies and drug-likeness.
 
@@ -19,10 +20,12 @@ instructions for the released training and benchmark assets. You can train
 PolyTamGen with SFT and DPO, run the dual-target (T2) and triple-target (T3)
 generation benchmarks, or recompute analyses from the archived results.
 
-![PolyTamGen architecture: ESM3 protein encoding, protein adapter, set-wise interaction, and token injection into NatureLM for molecule generation, with SFT and DPO training.](docs/images/framework.png)
+![PolyTamGen architecture: protein encoding, protein adapter, set-wise interaction, and token injection into NatureLM for molecule generation, with SFT and DPO training.](docs/images/framework.png)
 
 Model overview from the paper. Protein tokens interact across targets before
 they condition NatureLM. [View the original PDF](docs/images/framework.pdf).
+The figure labels the protein encoder as ESM3; the released feature inputs use
+ESM-C 600M.
 
 ## Repository contents
 
@@ -94,6 +97,40 @@ pdb_multitarget/       T2/T3 benchmark inference profiles and pocket features
 pdb_benchmark/         Benchmark TSVs, pocket sequences, and docking pockets
 dpo_preferences/       Preference pairs used for DPO training
 ```
+
+## Protein feature extraction
+
+The released data already contain protein-feature LMDBs. Use those files for
+the supplied training and benchmark profiles. For new targets, prepare the
+features before running inference:
+
+```text
+Target amino-acid sequence
+  -> frozen ESM-C 600M, one sequence per forward
+  -> last block's hidden state, before final LayerNorm
+  -> keep BOS + sequence tokens + EOS
+  -> CPU float16 tensor [sequence_length + 2, 1152]
+  -> pickle into LMDB under the profile's protein ID
+  -> protein adapter -> target interaction -> NatureLM
+```
+
+Use `output.hidden_states[35, 0]` with `esm==3.2.1`. Keep all sequence tokens
+and both special tokens; do not pool tokens or average layers.
+`output.embeddings` is the output after final LayerNorm and gives a different
+representation. The reference setup uses CUDA bfloat16 computation and float16
+storage.
+
+Choose the sequence explicitly. A pocket PDB contains only some residues, so
+encoding its sequence gives different features from encoding the full chain.
+When checking an archived feature, use the exact sequence associated with that
+key. Protein IDs in the profile must match the UTF-8 LMDB keys exactly.
+Inference reads these cached features; it does not extract them on the fly.
+
+See [the extraction example](source/pp2d/README.md#protein-feature-extraction)
+for sequence preparation, local encoding, file creation, and the reference
+comparison. The generic `src/esm_feature_extractor.py` helper defaults to a
+300M Forge model and mean pooling; those defaults do not produce the released
+600M feature format.
 
 ## Paper results
 
